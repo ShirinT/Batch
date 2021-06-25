@@ -1,0 +1,11 @@
+﻿This is a Batch File and used in batch Web API App.
+Files details i.e meta data is stored in database
+
+Azure Storage
+Azure KeyVault support
+Azure SQL Database
+Azure Web App for running your web AP
+
+azure web app deployment
+fluent validations
+azure key vault

@@ -6,16 +6,17 @@ using System.ComponentModel.DataAnnotations;
 namespace BatchAPI_Demo.Models
 {
 
-    public partial class Error
-    {
-      
+    public class Error
+    {      
         public int CorrelationID { get; set; }
         [Key]
-        public string Source { get; set; }
-        public string Description { get; set; }
+        public List<SubError> Errors { get; set; }
+   //     public string Source { get; set; }
+   //     public string Description { get; set; }
     }
-    public partial class SubError
+    public class SubError
         {
+        [Key]
             public string Source { get; set; }
             public string Description { get; set; }
 

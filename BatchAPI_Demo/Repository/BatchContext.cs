@@ -4,10 +4,10 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.IdentityModel.Protocols;
+using BatchAPI_Demo.Models;
+using Attribute = BatchAPI_Demo.Models.Attribute;
 
-#nullable disable
-
-namespace BatchAPI_Demo.Models
+namespace BatchAPI_Demo.Repository
 {
     public partial class BatchContext : DbContext
     {
@@ -22,16 +22,16 @@ namespace BatchAPI_Demo.Models
 
         public virtual DbSet<Acl> Acls { get; set; }
         public virtual DbSet<Attribute> Attributes { get; set; }
-        public virtual DbSet<BatchDetail> BatchDetails { get; set; }
-        public virtual DbSet<Error> Errors { get; set; }
+        public DbSet<BatchDetail> BatchDetails { get; set; }
+        public virtual DbSet<SubError> Errors { get; set; }
         public virtual DbSet<Files> File { get; set; }
+     //   public virtual DbSet<SubFiles> Attribute { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-
-                // optionsBuilder.UseSqlServer("Server=LAPTOP-TA80FR7A;Database=Batch;Trusted_Connection=True;");
-                optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["BatchDatabase"].ConnectionString);
+                // optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["BatchDatabase"].ConnectionString);
+                optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["AzureDB"].ConnectionString);
             }
         }
 
@@ -72,11 +72,11 @@ namespace BatchAPI_Demo.Models
                     .IsFixedLength(true);
             });
 //manually added
-            modelBuilder.Entity<Error>(entity =>
+            modelBuilder.Entity<SubError>(entity =>
             {
                 // entity.HasNoKey();
 
-                entity.Property(e => e.CorrelationID).HasColumnName("CorrelationID");
+             //   entity.Property(e => e.CorrelationID).HasColumnName("CorrelationID");
 
                 entity.Property(e => e.Source)
                     .HasMaxLength(10)

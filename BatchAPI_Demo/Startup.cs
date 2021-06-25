@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using BatchAPI_Demo.Models;
@@ -10,9 +11,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using BatchAPI_Demo.Service;
+using BatchAPI_Demo.Repository;
+using BatchAPI_Demo.Validators;
+using Microsoft.AspNetCore.Http;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using System.Net;
+
 
 namespace BatchAPI_Demo
 {
@@ -20,17 +30,28 @@ namespace BatchAPI_Demo
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this.Configuration = configuration;//added this new try
+         
         }
 
         public IConfiguration Configuration { get; }
 
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //  services.AddControllers();
-            services.AddMvc();
-            services.AddDbContext<BatchContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BatchDatabase")));
+            // services.AddControllers();
+            services.AddControllers(o =>
+            { 
+            o.AllowEmptyInputInBodyModelBinding = true;
+        });
+          //  services.AddMvc();
+            services.AddMvc().AddFluentValidation(c => c.RegisterValidatorsFromAssemblyContaining<Startup>());
+            services.AddTransient<IValidatorFactory, ServiceProviderValidatorFactory>();
+
+          //  services.AddDbContext<BatchContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BatchDatabase")));//sql connection string
+            services.AddDbContext<BatchContext>(options => options.UseSqlServer(Configuration.GetConnectionString("AzureDB"))); ///azure sql conn string
+
             //Register Swagger api here
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -38,8 +59,15 @@ namespace BatchAPI_Demo
                     Title = "My API",
                     Version = "v1",
                     Description = "API for BatchDetails"
-                });
+                });               
+
             });
+
+            //   services.AddSingleton<IConfiguration>(Configuration);
+            services.AddScoped<IBatchService, BatchService>();
+            services.AddScoped<IBlobStorage, BlobStorageService>();
+            services.AddScoped<CreateBatchRepository>();//, BatchService>();
+            services.AddScoped<IReqBatchValidator, ReqBatchValidator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,10 +83,18 @@ namespace BatchAPI_Demo
             });
             app.UseHttpsRedirection();
 
+            app.UseStaticFiles();
+
+            // app.UseStaticFiles(new StaticFileOptions
+            // {
+            //     FileProvider = new PhysicalFileProvider(
+            //Path.Combine(env.ContentRootPath, "MyStaticFiles")),
+            //     RequestPath = "/StaticFiles"
+            // });
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseStatusCodePagesWithReExecute("/Errors/{0}");  // I use this version
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

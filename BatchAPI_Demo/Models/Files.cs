@@ -24,6 +24,12 @@ namespace BatchAPI_Demo.Models
         public string Filesize { get; set; }
         public string MimeType { get; set; }
         public string Hash { get; set; }
-        public List<SubAttribute> attribute { get; set; }
+        public List<SubAttribute> Attribute { get; set; }
     }
+
+    //public partial class LAttribute
+    //{
+    //    public string Key { get; set; }
+    //    public string Value { get; set; }
+    //}
 }

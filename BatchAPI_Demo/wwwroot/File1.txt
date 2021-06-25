@@ -1,0 +1,32 @@
+﻿This is a Batch File and used in batch Web API App.
+Files details i.e meta data is stored in database
+Keep one static file on your application which we are going to upload to azure storage account when this endpoint is called.
+End point should be same as given in above swagger doc.
+
+Files details i.e meta data should be stored in database
+
+ii.Keep one static file on your application which we are going to upload to azure storage account when this endpoint is called.
+
+iii. End point should be same as given in above swagger doc.
+Files details i.e meta data should be stored in database
+
+ii.Keep one static file on your application which we are going to upload to azure storage account when this endpoint is called.
+
+iii. End point should be same as given in above swagger doc.
+i. Files details i.e meta data should be stored in database
+
+ii.Keep one static file on your application which we are going to upload to azure storage account when this endpoint is called.
+
+iii. End point should be same as given in above swagger doc.
+
+Do the following changes in your application.
+
+1) Add Keyvault support in your application for managing secrets like db connection string and storage account key.
+
+2) Add Azure storage account support in your application and perform below tasks.
+
+i) When batch is created application should create container in azure storage account
+
+ii) When you try addfile endpoint the file stored in in application should be uploaded in container created during createbatch
+
+iii. End point should be same as given in above swagger doc.
